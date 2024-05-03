@@ -152,8 +152,8 @@ export PACKAGES="\
 "
 
 export PACKAGE_OVERRIDES="\
-	https://github.com/ChimeraOS/linux-chimeraos/releases/download/v6.8.5-chos2-1/linux-chimeraos-6.8.5.chos2-1-x86_64.pkg.tar.zst \
-	https://github.com/ChimeraOS/linux-chimeraos/releases/download/v6.8.5-chos2-1/linux-chimeraos-headers-6.8.5.chos2-1-x86_64.pkg.tar.zst 
+	https://github.com/ChimeraOS/linux-chimeraos/releases/download/v6.8.5-chos3-1/linux-chimeraos-6.8.5.chos3-1-x86_64.pkg.tar.zst \
+	https://github.com/ChimeraOS/linux-chimeraos/releases/download/v6.8.5-chos3-1/linux-chimeraos-headers-6.8.5.chos3-1-x86_64.pkg.tar.zst \
 	https://github.com/ChimeraOS/mesa-chimeraos/releases/download/24.0.5-chos1-1/lib32-libva-mesa-driver-1--24.0.5.chos1-1-x86_64.pkg.tar.zst \
 	https://github.com/ChimeraOS/mesa-chimeraos/releases/download/24.0.5-chos1-1/lib32-mesa-1--24.0.5.chos1-1-x86_64.pkg.tar.zst \
 	https://github.com/ChimeraOS/mesa-chimeraos/releases/download/24.0.5-chos1-1/lib32-mesa-vdpau-1--24.0.5.chos1-1-x86_64.pkg.tar.zst \
@@ -179,8 +179,6 @@ export AUR_PACKAGES="\
 	asusctl \
 	bcm20702a1-firmware \
 	boxtron \
-	chimera \
-	chimeraos-device-quirks-git \
 	downgrade \
 	frzr \
 	gamescope-plus \
@@ -201,7 +199,6 @@ export AUR_PACKAGES="\
 	pikaur \
 	powerstation-bin \
 	python-vdf \
-	retroarch-autoconfig-udev-git \
 	rtl8812au-dkms-git \
 	rtl8814au-dkms-git \
 	rtl88x2bu-dkms-git \
@@ -233,9 +230,7 @@ export SERVICES="\
 "
 
 export USER_SERVICES="\
-	chimera.service \
 	pipewire \
-	steam-patch.service \
 "
 
 export FILES_TO_DELETE="\
@@ -285,8 +280,6 @@ postinstallhook() {
 	# Add chrt permission
 	echo "${USERNAME} ALL=(ALL) NOPASSWD: /usr/bin/chrt" > /etc/sudoers.d/realtime
 
-	# disable retroarch menu in joypad configs
-	find /usr/share/libretro/autoconfig -type f -name '*.cfg' | xargs -d '\n' sed -i '/input_menu_toggle_btn/d'
 
 	# download and add racing wheel udev rules
 	pushd /usr/lib/udev/rules.d
@@ -301,12 +294,6 @@ postinstallhook() {
 	#rm /usr/share/libalpm/hooks/71-dkms-remove.hook
 	#pacman --noconfirm -Rnsdd make gcc dkms ${KERNEL_PACKAGE}-headers
 
-	# remove dolphin standalone emulator files (only need /usr/share/dolphin-emu/sys)
-	rm /usr/bin/dolphin-emu
-	rm /usr/bin/dolphin-emu-nogui
-	# dolphin-tool is no longer created in new builds?
-	#rm /usr/bin/dolphin-tool
-	rm /usr/share/applications/dolphin-emu.desktop
 
 	# clean up desktop shortcuts
 	sed -i -e 's/Name=Steam (Runtime)/Name=Steam/' /usr/share/applications/steam.desktop
